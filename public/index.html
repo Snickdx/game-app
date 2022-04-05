@@ -69,81 +69,119 @@
       <main class="container">
         <h1>Browse Games</h1>
 
-        <section class="row">
+        <section class="row" id="result">
           
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
 
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
-
-          <div class="col s6 m3 game-tile">
-            <div class="card-panel card-panel teal center">
-              <span class="white-text">
-                Game Title
-              </span>
-            </div>  
-          </div>
 
 
       
 
         </section>
-      </main>
 
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal">
+
+        </div>
+
+      </main>
+    
+    <script src="data.js"></script>
 
     <script>
-         M.AutoInit();
+
+        const clientId = "szheafgfevm6hxw5xgf5lnz6vvmdea";
+        const token = "1epxp3nkwrjygmmnksw8bbin3xrj8w";
+
+        async function loadGames(){
+
+          // let requestOptions = {
+          //   method: 'POST',
+          //   headers: {
+          //     "Client-ID": clientId,
+          //     "Authorization": `Bearer ${token}`,
+          //     "Content-Type": "text/plain"
+          //   },
+          //   body: "fields name,cover,genres,summary,url;",
+          //   redirect: 'follow'
+          // };
+
+          // let response = await fetch("https://api.igdb.com/v4/games", requestOptions)
+          // let result = await response.json();
+
+          drawGames(games);
+        }
+
+        function drawGames(games){
+          let result = document.querySelector('#result');
+          let html = '';
+
+          for(let game of games){
+            html+=`
+       
+              <div class="col s6 m4 game-tile">
+                <div class="card-panel card-panel teal center">
+                  <div class="white-text truncate flow-text">
+                    ${game.name}
+                  </div>
+                  <a href='#${game.id}' class="white-text" onclick='showDetails(${game.id})'>Details</a>
+                </div>  
+              </div>
+              
+           
+          `;
+          }
+
+          result.innerHTML = html;
+        }
+
+
+
+        loadGames()
+
+        async function getGame(gameId){
+          //peform http request to get game details
+
+          //api not working so its mocked here instead
+          // console.log(games.map(game=>game.id).join(','))
+
+          return games.filter(game=> game.id === gameId)[0];
+        }
+
+        async function getGameCover(gameId){
+          let [cover, ...rest] =  covers.filter(cover => cover.game == gameId);
+          console.log(gameId, cover);
+          return cover ? cover.url : 'https://via.placeholder.com/250';
+        }
+
+        async function showDetails(gameId){
+          const modalhtml = document.querySelector('#modal1');
+          const modal = M.Modal.init(modalhtml);
+
+          const game = await getGame(gameId);
+
+          modalhtml.innerHTML = `
+            <div class="modal-content">
+              <h4>${game.name}</h4>
+              <img class="materialboxed" src="${await getGameCover(game.id)}">
+              <p>${game.summary}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="${game.url}" target="_blank" class="modal-close waves-effect waves-green btn-flat">View on IGDB</a>
+              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
+          `;
+
+          console.log(game);
+
+          modal.open();
+
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+          M.AutoInit();
+        });
+
     </script>
     
 </body>

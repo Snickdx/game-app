@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "serve public"
+    "start": "cd public && live-server"
   },
   "repository": {
     "type": "git",
